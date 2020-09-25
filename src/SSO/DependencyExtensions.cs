@@ -19,6 +19,9 @@ namespace SSO
             services.AddSingleton<IPostConfigureOptions<AuthServiceOptions>, AuthServiceOptionsPostConfigure>();
 
             services.AddScoped<AuthDBContext>();
+
+            services.AddScoped<IUserManagerService, UserManagerService>();
+
             services.AddScoped<IAuthService, AuthService>();
 
             return services;

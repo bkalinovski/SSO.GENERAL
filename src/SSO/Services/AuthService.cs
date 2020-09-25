@@ -18,12 +18,12 @@ namespace SSO.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly AuthDBContext _authDBContext;
+        private readonly IUserManagerService _userManagerService;
         private AuthServiceOptions _options;
 
-        public AuthService(AuthDBContext authDBContext, IOptionsMonitor<AuthServiceOptions> optionsAccessor)
+        public AuthService(IUserManagerService userManagerService, IOptionsMonitor<AuthServiceOptions> optionsAccessor)
         {
-            _authDBContext = authDBContext;
+            _userManagerService = userManagerService;
             _options = optionsAccessor.CurrentValue;
             optionsAccessor.OnChange((options, name) => _options = options);
         }
@@ -37,22 +37,22 @@ namespace SSO.Services
                 throw new AuthInvalidRequestException();
             }
 
-            var userEntity = await _authDBContext.Users.GetUser(user.Username, user.Password);
+            var userEntity = await _userManagerService.GetUserByCredentials(user.Username, user.Password);
 
             if (userEntity == null)
             {
                 throw new AuthUserNotFoundException();
             }
 
-            var userRoleQuery = await _authDBContext.GetUserRoles(userEntity.Id);
+            var userRoles = await _userManagerService.GetUserRoles(userEntity.Id);
             var userClaims = new List<Claim>()
             {
                 new Claim("Name", $"{userEntity.LastName} {userEntity.FirstName}")
             };
             
-            foreach (var userRole in userRoleQuery)
+            foreach (var userRole in userRoles)
             {
-                userClaims.Add(new Claim("Role", userRole.Role));
+                userClaims.Add(new Claim("Role", userRole));
             }
 
             var signingCredentials = new SigningCredentials(_options.IssuerSigningKey, SecurityAlgorithms.HmacSha256);
