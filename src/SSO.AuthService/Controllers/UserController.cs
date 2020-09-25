@@ -27,18 +27,19 @@ namespace SSO.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int userId)
         {
-            var user = await _userManagerService.GetUserById(userId);
-
-            if(user == null)
+            try 
+            {
+                var user = await _userManagerService.GetUserById(userId);
+                return Ok(user);
+            }
+            catch (UserNotFoundException)
             {
                 return NotFound();
             }
-
-            return Ok(user);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserModel user)
+        public async Task<IActionResult> Create([FromBody] NewUserModel user)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace SSO.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody]UserModel user, [FromQuery] int userId)
+        public async Task<IActionResult> Update([FromBody] NewUserModel user, [FromQuery] int userId)
         {
             try
             {

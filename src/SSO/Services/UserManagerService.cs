@@ -21,7 +21,7 @@ namespace SSO.Services
             _authDBContext = authDBContext;
         }
 
-        public async Task CreateUser(UserModel user)
+        public async Task CreateUser(NewUserModel user)
         {
             var userEntity = await _authDBContext.Users.GetUserByUsername(user.FirstName);
 
@@ -35,22 +35,36 @@ namespace SSO.Services
 
         public async Task DeleteUserById(int userId)
         {
+            var userEntity = await _authDBContext.Users.GetUserById(userId);
+
+            if (userEntity == null)
+            {
+                throw new UserNotFoundException();
+            }
+
             await _authDBContext.Users.DeleteUserById(userId);
         }
 
-        public Task<List<UserEntity>> GetListOfAllUsers()
+        public Task<List<UserModel>> GetListOfAllUsers()
         {
             return _authDBContext.Users.GetListOfAllUsers();
         }
 
-        public async Task<UserEntity> GetUserByCredentials(string username, string password)
+        public async Task<UserModel> GetUserByCredentials(string username, string password)
         {
             return await _authDBContext.Users.GetUser(username, password);
         }
 
-        public async Task<UserEntity> GetUserById(int userId)
+        public async Task<UserModel> GetUserById(int userId)
         {
-            return await _authDBContext.Users.GetUserById(userId);
+            var userEntity = await _authDBContext.Users.GetUserById(userId);
+
+            if (userEntity == null)
+            {
+                throw new UserNotFoundException();
+            }
+
+            return userEntity;
         }
 
         public async Task<List<string>> GetUserRoles(int userId)
@@ -58,8 +72,15 @@ namespace SSO.Services
             return await _authDBContext.GetUserRoles(userId);
         }
 
-        public async Task UpdateUserData(UserModel user, int userId)
+        public async Task UpdateUserData(NewUserModel user, int userId)
         {
+            var userEntity = await _authDBContext.Users.GetUserById(userId);
+
+            if (userEntity == null)
+            {
+                throw new UserNotFoundException();
+            }
+
             await _authDBContext.Users.UpdatetUser(user, userId);
         }
     }

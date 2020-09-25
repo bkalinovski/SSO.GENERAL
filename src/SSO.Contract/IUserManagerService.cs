@@ -9,17 +9,17 @@ namespace SSO.Contract
 {
     public interface IUserManagerService
     {
-        Task<UserEntity> GetUserByCredentials(string username, string password);
+        Task<UserModel> GetUserByCredentials(string username, string password);
 
-        Task<UserEntity> GetUserById(int userId);
+        Task<UserModel> GetUserById(int userId);
 
-        Task<List<UserEntity>> GetListOfAllUsers();
+        Task<List<UserModel>> GetListOfAllUsers();
 
         Task<List<string>> GetUserRoles(int userId); 
 
-        Task CreateUser(UserModel user);
+        Task CreateUser(NewUserModel user);
 
-        Task UpdateUserData(UserModel user, int userId);
+        Task UpdateUserData(NewUserModel user, int userId);
 
         Task DeleteUserById(int userId);
     }

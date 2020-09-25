@@ -6,6 +6,8 @@ namespace SSO.Contract.Models
 {
     public class UserModel
     {
+		public int Id { get; set; }
+
 		public string FirstName { get; set; }
 
 		public string LastName { get; set; }
@@ -15,7 +17,5 @@ namespace SSO.Contract.Models
 		public string Phone { get; set; }
 
 		public string Username { get; set; }
-
-		public string Password { get; set; }
 	}
 }
