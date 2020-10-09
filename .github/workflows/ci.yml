@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI/CD
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: build & publish
+      env:
+        DOCKER_LOGIN: ${{ secrets.DOCKER_LOGIN }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        ls -l
+        echo 'DOCKER LOGIN'
+        docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+        echo 'RUNNING BUILD'
+        docker build -t bkalinovski/sso-service:latest ./src/.
+        echo 'PUSHING IMAGE TO REPOSITORY'
+        docker push bkalinovski/sso-service:latest
+        echo 'DONE!'
